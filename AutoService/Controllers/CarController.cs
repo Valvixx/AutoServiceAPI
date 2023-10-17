@@ -45,5 +45,18 @@ namespace AutoService.Controllers
             carRepository.AddCar(newCar);
             return newCar;
         }
+        [HttpPut]
+        public Car Post(string vin, string brand, string model, int releaseYear)
+        {
+            CarRepository carRepository = new CarRepository();
+            carRepository.UpdateCar(vin, brand, model, releaseYear);
+            return new Car
+            {
+                Brand = brand,
+                Model = model,
+                ReleaseYear = releaseYear,
+                VIN = vin
+            };
+        }
     }
 }

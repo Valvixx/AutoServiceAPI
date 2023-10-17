@@ -18,5 +18,15 @@ namespace AutoService.Repository
         {
             cars.Add(car);
         }
+        public void UpdateCar(string vin, string brand, string model, int releaseYear)
+        {
+            Car carToUpdate = cars.FirstOrDefault(car => car.VIN == vin);
+            if (carToUpdate != null)
+            {
+                carToUpdate.Brand = brand;
+                carToUpdate.Model = model;
+                carToUpdate.ReleaseYear = releaseYear;
+            }
+        }
     }
 }

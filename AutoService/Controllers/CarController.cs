@@ -23,11 +23,11 @@ namespace AutoService.Controllers
             return cars;
         }
 
-        [HttpGet("{id}")]
-        public Car Get(string id)
+        [HttpGet("{VIN}")]
+        public Car Get(string vin)
         {
             List<Car> cars = carRepository.GetAllCars();
-            var SelectedCar = cars.FirstOrDefault(car => car.VIN == id);
+            Car SelectedCar = cars.FirstOrDefault(car => car.VIN == vin);
             return SelectedCar;
         }
 
@@ -46,7 +46,7 @@ namespace AutoService.Controllers
             return newCar;
         }
         [HttpPut]
-        public Car Post(string vin, string brand, string model, int releaseYear)
+        public Car Put(string vin, string brand, string model, int releaseYear)
         {
             CarRepository carRepository = new CarRepository();
             carRepository.UpdateCar(vin, brand, model, releaseYear);

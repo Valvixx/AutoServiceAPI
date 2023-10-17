@@ -20,7 +20,7 @@ namespace AutoService.Repository
         }
         public void UpdateCar(string vin, string brand, string model, int releaseYear)
         {
-            Car carToUpdate = cars.FirstOrDefault(car => car.VIN == vin);
+            Car carToUpdate = cars.FirstOrDefault(cars => cars.VIN == vin);
             if (carToUpdate != null)
             {
                 carToUpdate.Brand = brand;

@@ -11,9 +11,9 @@ namespace AutoService.Controllers
     {
         private CarRepository carRepository;
 
-        public CarController()
+        public CarController(CarRepository carRepository)
         {
-            carRepository = new CarRepository();
+            this.carRepository = carRepository;
         }
 
         [HttpGet]

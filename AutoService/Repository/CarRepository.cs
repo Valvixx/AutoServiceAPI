@@ -4,7 +4,7 @@ namespace AutoService.Repository
 {
     public class CarRepository
     {
-        private List<Car> cars = new List<Car>
+        public static List<Car> cars = new List<Car>
         {
             new Car { Brand = "Toyota", Model = "Camry", ReleaseYear = 2020, VIN = "VIN123456789" },
             new Car { Brand = "Honda", Model = "Civic", ReleaseYear = 2019, VIN = "VIN987654321" },

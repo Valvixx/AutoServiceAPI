@@ -11,9 +11,9 @@ namespace AutoService.Controllers
     public class CustomerController : ControllerBase
     {
         private CustomerRepository customerRepository;
-        public CustomerController()
+        public CustomerController(CustomerRepository customerRepository)
         {
-            customerRepository = new CustomerRepository();
+            this.customerRepository = customerRepository;
         }
 
         [HttpGet]

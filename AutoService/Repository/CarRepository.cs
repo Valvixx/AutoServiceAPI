@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AutoService.Models;
 using AutoServiceAPI.Models;
 namespace AutoService.Repository
 {
@@ -27,6 +28,10 @@ namespace AutoService.Repository
                 carToUpdate.Model = model;
                 carToUpdate.ReleaseYear = releaseYear;
             }
+        }
+        public List<Car> GetAllCustomerCars(string phone)
+        {
+            return OrderRepository.orders.Where(o => o.User.Phone == phone).Select(o => o.OrderCar).ToList();
         }
     }
 }

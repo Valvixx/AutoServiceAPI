@@ -35,22 +35,24 @@ namespace AutoService.Repository
         {
             customers.Add(customer);
         }
-        public void UpdateCustomer(string name, string adress, string phone)
+        public void UpdateCustomer(string phone, string name, string adress)
         {
-            Customer customerToUpdate = customers.FirstOrDefault(customers => customers.Name == name);
+            Customer customerToUpdate = customers.FirstOrDefault(customers => customers.Phone == phone);
             if (customerToUpdate != null)
             {
                 customerToUpdate.Adress = adress;
-                customerToUpdate.Phone = phone;
+                customerToUpdate.Name = name;
             }
         }
-        public void DeleteCustomer(string name)
+        public bool DeleteCustomer(string phone)
         {
-            Customer customerToDelete = customers.FirstOrDefault(customers => customers.Name == name);
+            Customer customerToDelete = customers.FirstOrDefault(customers => customers.Phone == phone);
             if (customerToDelete != null)
             {
                 customers.Remove(customerToDelete);
+                return true;
             }
+            return false;
         }
     }
 }

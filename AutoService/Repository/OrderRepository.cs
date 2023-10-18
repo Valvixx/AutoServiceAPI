@@ -1,15 +1,17 @@
 ﻿using AutoService.Models;
 using AutoServiceAPI.Models;
+using Microsoft.AspNetCore.Mvc;
+
 namespace AutoService.Repository
 {
     public class OrderRepository
     {
-        private static List<Order> orders = new List<Order>()
+        public static List<Order> orders = new List<Order>()
         {
             new Order
             {
                 OrderCar = CarRepository.cars[0],
-                User = CustomerRepository.customers[0],
+                User = CustomerRepository.customers[1],
                 Date = "20.09.2023",
                 Description = "Replacement of brake pads",
                 Status = "Completed",
@@ -54,13 +56,23 @@ namespace AutoService.Repository
                 orderToUpdate.Status = status;
             }
         }
-        public void DeleteOrder(string id)
+        public bool DeleteOrder(string id)
         {
             Order orderToDelete = orders.FirstOrDefault(orders => orders.Id == id);
             if (orderToDelete != null)
             {
                 orders.Remove(orderToDelete);
+                return true;
             }
+            return false;
         }
+
+        public List<Order> GetOrdersByCustomer(string phone)
+        {
+            var customerOrders = orders.Where(o => o.User.Phone == phone).ToList();
+            return customerOrders;
+        }
+
+
     }
 }

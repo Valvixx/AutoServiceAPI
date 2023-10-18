@@ -2,6 +2,8 @@
 using AutoService.Repository;
 using AutoServiceAPI.Models;
 using System.Collections.Generic;
+using AutoService.Models;
+using System.Numerics;
 
 namespace AutoService.Controllers
 {
@@ -17,22 +19,24 @@ namespace AutoService.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Car> Get()
+        public ActionResult<IEnumerable<Car>> Get()
         {
             List<Car> cars = carRepository.GetAllCars();
-            return cars;
+
+            return Ok(cars);
         }
 
         [HttpGet("{VIN}")]
-        public Car Get(string vin)
+        public ActionResult<Car> Get(string vin)
         {
             List<Car> cars = carRepository.GetAllCars();
             Car SelectedCar = cars.FirstOrDefault(car => car.VIN == vin);
-            return SelectedCar;
+            if (string.IsNullOrWhiteSpace(vin)) return BadRequest("VIN can not be empty");
+            return Ok(SelectedCar);
         }
 
         [HttpPost]
-        public Car Post(string brand, string model, int releaseYear, string vin)
+        public ActionResult<Car> Post(string brand, string model, int releaseYear, string vin)
         {
             Car newCar = new Car
             {
@@ -41,22 +45,41 @@ namespace AutoService.Controllers
                 ReleaseYear = releaseYear,
                 VIN = vin
             };
+            if (!newCar.IsValid())
+            {
+                return BadRequest("Data is not valid");
+            }
             CarRepository carRepository = new CarRepository();
             carRepository.AddCar(newCar);
-            return newCar;
+            return Ok(newCar);
         }
+
         [HttpPut]
-        public Car Put(string vin, string brand, string model, int releaseYear)
+        public ActionResult<Car> Put(string vin, string brand, string model, int releaseYear)
         {
             CarRepository carRepository = new CarRepository();
-            carRepository.UpdateCar(vin, brand, model, releaseYear);
-            return new Car
+            Car newCar = new Car
             {
                 Brand = brand,
                 Model = model,
                 ReleaseYear = releaseYear,
                 VIN = vin
             };
+            if (!newCar.IsValid())
+            {
+                return BadRequest("Data is not valid");
+            }
+            carRepository.UpdateCar(vin, brand, model, releaseYear);
+            return Ok(newCar);
+        }
+
+        [HttpGet("by-client/{phone}")]
+        public ActionResult<List<Car>> GetCarsByCustomer(string phone)
+        {
+            CarRepository carRepository = new CarRepository();
+            var cars = carRepository.GetAllCustomerCars(phone);
+            if (string.IsNullOrWhiteSpace(phone)) return BadRequest("Phone can not be empty");
+            return Ok(cars);
         }
     }
 }

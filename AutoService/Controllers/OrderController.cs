@@ -17,56 +17,80 @@ namespace AutoService.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Order> Get()
+        public ActionResult<IEnumerable<Order>> Get()
         {
             List<Order> orders = orderRepository.GetAllOrders();
-            return orders;
+            return Ok(orders);
         }
 
         [HttpGet("{Id}")]
-        public Order Get(string id)
+        public ActionResult<Order> Get(string id)
         {
+            if (string.IsNullOrWhiteSpace(id)) return BadRequest("Id can not be empty");
             List<Order> orders = orderRepository.GetAllOrders();
             Order SelectedOrder = orders.FirstOrDefault(orders => orders.Id == id);
-            return SelectedOrder;
+            return Ok(SelectedOrder);
         }
 
         [HttpPost]
-        public Order Post(string id, Customer user,Car orderCar, string date, string description, string status)
+        public ActionResult<Order> Post(OrderDTO orderDTO)
         {
             Order newOrder = new Order()
             {
-                User = user,
-                OrderCar = orderCar,
-                Date = date,
-                Description = description,
-                Status = status
-        };
+                User = orderDTO.CustomerInfo,
+                OrderCar = orderDTO.CarInfo,
+                Date = orderDTO.Date,
+                Description = orderDTO.Description,
+                Status = orderDTO.Status,
+                Id = orderDTO.Id
+            };
+            if (!newOrder.IsValid())
+            {
+                return BadRequest("Data is not valid");
+            }
             OrderRepository orderRepository = new OrderRepository();
             orderRepository.AddOrder(newOrder);
-            return newOrder;
+            return Ok(newOrder);
         }
 
         [HttpPut]
-        public Order Put(string id, Customer user, Car orderCar, string date, string description, string status)
+        public ActionResult<Order> Put(OrderDTO orderDTO)
         {
             OrderRepository orderRepository = new OrderRepository();
-            orderRepository.UpdateOrder(id, user, orderCar, date, description, status);
-            return new Order()
+            var newOrder = new Order()
             {
-                User = user,
-                OrderCar = orderCar,
-                Date = date,
-                Description = description,
-                Status = status
+                User = orderDTO.CustomerInfo,
+                OrderCar = orderDTO.CarInfo,
+                Date = orderDTO.Date,
+                Description = orderDTO.Description,
+                Status = orderDTO.Status
             };
+            if (!newOrder.IsValid())
+            {
+                return BadRequest("Data is not valid");
+            }
+            orderRepository.UpdateOrder( orderDTO.Id, orderDTO.CustomerInfo, orderDTO.CarInfo, orderDTO.Date, orderDTO.Description, orderDTO.Status);
+            return Ok(newOrder);
+;
         }
 
         [HttpDelete]
-        public void Delete(string id)
+        public IActionResult Delete(string id)
         {
             OrderRepository orderRepository = new OrderRepository();
-            orderRepository.DeleteOrder(id);
+            bool result = orderRepository.DeleteOrder(id);
+            if (string.IsNullOrWhiteSpace(id)) return BadRequest("Id can not be empty");
+            if (!result) return NotFound($"Id:{id} not found");
+            return Ok($"Order with Id:{id} was deleted");
+        }
+
+        [HttpGet("by-client/{phone}")]
+        public ActionResult<List<Order>> GetOrdersByCustomer(string phone)
+        {
+            OrderRepository orderRepository = new OrderRepository();
+            var orders = orderRepository.GetOrdersByCustomer(phone);
+            if (string.IsNullOrWhiteSpace(phone)) return BadRequest("Phone can not be empty");
+            return Ok(orders);
         }
     }
 }

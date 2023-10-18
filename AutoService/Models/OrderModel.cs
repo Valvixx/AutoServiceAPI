@@ -1,4 +1,5 @@
-﻿using AutoServiceAPI.Models;
+﻿using System.Reflection;
+using AutoServiceAPI.Models;
 namespace AutoService.Models
 {
     public class Order
@@ -9,5 +10,16 @@ namespace AutoService.Models
         public string Description { get; set;}
         public string Status { get; set;}
         public string Id { get; set;}
-    }
+
+        public bool IsValid()
+        {
+            if (string.IsNullOrWhiteSpace(Date) ||
+                string.IsNullOrWhiteSpace(Description) ||
+                string.IsNullOrWhiteSpace(Status) ||
+                ! OrderCar.IsValid() ||
+                ! User.IsValid())
+            { return false; }
+            return true;
+        }
+    }   
 }

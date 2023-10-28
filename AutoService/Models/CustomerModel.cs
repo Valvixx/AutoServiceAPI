@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace AutoService.Models
+﻿namespace AutoService.Models
 {
     public class Customer
     {

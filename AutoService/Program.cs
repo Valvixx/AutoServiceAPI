@@ -1,5 +1,9 @@
+using System.Data.Common;
+using AutoService.Data.Repositories;
 using AutoService.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql;
+
 [assembly: ApiController]
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +17,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<CustomerRepository>();
 builder.Services.AddSingleton<CarRepository>();
 builder.Services.AddSingleton<OrderRepository>();
+builder.Services.AddSingleton<CarRepositorySQL>();
+
+
+builder.Services.AddTransient<DbConnection>(s => new NpgsqlConnection("postgres://User:User1234@localhost:5431/AutoServiceDB"));
+builder.Services.AddTransient<DbConnection>(s => new NpgsqlConnection("Server=localhost:5431;Database=AutoServiceDB;User Id=User;Password=User1234;"));
 
 var app = builder.Build();
 

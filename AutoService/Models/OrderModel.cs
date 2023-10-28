@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using AutoServiceAPI.Models;
 namespace AutoService.Models
 {
     public class Order

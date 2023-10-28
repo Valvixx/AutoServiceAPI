@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using AutoService.Models;
-using AutoServiceAPI.Models;
 namespace AutoService.Repository
 {
     public class CarRepository

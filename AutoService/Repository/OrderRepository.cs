@@ -1,5 +1,4 @@
 ﻿using AutoService.Models;
-using AutoServiceAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoService.Repository

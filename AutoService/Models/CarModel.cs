@@ -1,4 +1,6 @@
-﻿namespace AutoServiceAPI.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace AutoService.Models
 {
     public class Car
     {

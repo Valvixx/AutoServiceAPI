@@ -1,5 +1,4 @@
 ﻿using AutoService.Models;
-using AutoServiceAPI.Models;
 
 namespace AutoService.Repository
 {

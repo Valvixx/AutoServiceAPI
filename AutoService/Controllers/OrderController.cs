@@ -1,6 +1,5 @@
 ﻿using AutoService.Models;
 using AutoService.Repository;
-using AutoServiceAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

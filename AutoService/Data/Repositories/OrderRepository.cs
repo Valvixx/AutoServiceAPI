@@ -13,27 +13,28 @@ namespace AutoService.Data.Repositories
             this.dbConnection = dbConnection;
         }
 
-        public List<Order> GetAllOrders()
+        public List<DbOrder> GetAllOrders()
         {
-            return dbConnection.Query<Order>("SELECT * FROM orders JOIN cars ON cars.vin = orders.car").ToList();
+            
+            return dbConnection.Query<DbOrder>("SELECT * FROM orders").ToList();
         }
 
-        public Order? GetOrderById(string id)
+        public DbOrder? GetOrderById(string id)
         {
             var sql = @"SELECT * FROM orders WHERE id = @Id";
 
-            return dbConnection.QueryFirstOrDefault<Order>(sql, new { @Id = id });
+            return dbConnection.QueryFirstOrDefault<DbOrder>(sql, new { @Id = id });
         }
 
-        public void AddOrder(Order order)
+        public void AddOrder(DbOrder order)
         {
             var sql = @"INSERT INTO orders(id, car, customer, date, description, status)
                 VALUES (@Id, @Vin, @User, @Date, @Description, @Status)";
 
-            dbConnection.Execute(sql, new {@Id = order.Id, @Vin = order.OrderCar.VIN, @User = order.User.Phone, @Date = order.Date, @Description = order.Description, @Status = order.Status });
+            dbConnection.Execute(sql, new {@Id = order.Id, @Vin = order.Car, @User = order.Customer, @Date = order.Date, @Description = order.Description, @Status = order.Status });
         }
-
-        public void UpdateOrderById(Order order)
+        
+        public void UpdateOrderById(DbOrder order)
         {
             var sql = @"UPDATE orders SET
                 car = @Vin,
@@ -43,7 +44,7 @@ namespace AutoService.Data.Repositories
                 status = @Status
                 WHERE id = @Id";
 
-            dbConnection.Execute(sql, new {@Vin = order.OrderCar.VIN, @User = order.User.Phone, @Date = order.Date, @Description = order.Description, @Ststus = order.Status});
+            dbConnection.Execute(sql, new {@Vin = order.Car, @User = order.Customer, @Date = order.Date, @Description = order.Description, @Ststus = order.Status});
         }
     }
 }

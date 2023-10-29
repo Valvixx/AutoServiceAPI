@@ -1,11 +1,9 @@
-﻿using AutoService.Models;
-
-namespace AutoService.Controllers
+﻿namespace AutoService.Models
 {
-    public class OrderDTO
+    public class DbOrder
     {
-        public  Customer CustomerInfo { get; set; }
-        public Car CarInfo { get; set; }
+        public string Car { get; set; }
+        public string Customer { get; set; }
         public string Date { get; set; }
         public string Description { get; set; }
         public string Status { get; set; }

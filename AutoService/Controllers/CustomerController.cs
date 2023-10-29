@@ -18,7 +18,6 @@ namespace AutoService.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Customer>> Get()
         {
-            List<Customer> customers = customerRepository.GetAllCustomers();
             return Ok(customers);
         }
 

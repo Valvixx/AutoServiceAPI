@@ -18,6 +18,7 @@ builder.Services.AddSingleton<CustomerRepository>();
 builder.Services.AddSingleton<CarRepository>();
 builder.Services.AddSingleton<OrderRepository>();
 builder.Services.AddSingleton<CarRepositorySQL>();
+builder.Services.AddSingleton<CustomerRepositorySQL>();
 
 
 builder.Services.AddTransient<DbConnection>(s => new NpgsqlConnection("postgres://User:User1234@localhost:5431/AutoServiceDB"));

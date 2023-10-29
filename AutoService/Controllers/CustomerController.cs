@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using AutoService.Repository;
 using AutoService.Models;
+using AutoService.Data.Repositories;
 
 namespace AutoService.Controllers
 {
@@ -10,23 +11,27 @@ namespace AutoService.Controllers
     public class CustomerController : ControllerBase
     {
         private CustomerRepository customerRepository;
-        public CustomerController(CustomerRepository customerRepository)
+        private CustomerRepositorySQL customerRepositorySQL;
+        public CustomerController(CustomerRepository customerRepository, CustomerRepositorySQL customerRepositorySQL)
         {
             this.customerRepository = customerRepository;
+            this.customerRepositorySQL = customerRepositorySQL;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<Customer>> Get()
         {
+            List<Customer> customers = customerRepositorySQL.GetAllCustomers();
+
             return Ok(customers);
         }
 
-        [HttpGet("{Name}")]
-        public ActionResult<Customer> Get(string name)
+        [HttpGet("{phone}")]
+        public ActionResult<Customer> Get([FromRoute]string phone, CustomerRepositorySQL customerRepositorySQL)
         {
-            List<Customer> customers = customerRepository.GetAllCustomers();
-            Customer SelectedCustomer = customers.FirstOrDefault(customers => customers.Name == name);
-            return Ok(SelectedCustomer);
+            Customer customer = customerRepositorySQL.GetCustomerByPhone(phone);
+
+            return Ok(customer);
         }
 
         [HttpPost]
@@ -38,39 +43,41 @@ namespace AutoService.Controllers
                 Adress = adress,
                 Phone = phone
             };
+
             if (!newCustomer.IsValid())
             {
                 return BadRequest("Data is not valid");
             }
-            CustomerRepository customerRepository = new CustomerRepository();
-            customerRepository.AddCustomer(newCustomer);
+
+            customerRepositorySQL.AddCustomer(newCustomer);
+
             return Ok(newCustomer);
         }
 
         [HttpPut]
         public ActionResult<Customer> Put(string name, string adress, string phone)
         {
-            CustomerRepository customerRepository = new CustomerRepository();
             var newCustomer = new Customer
             {
                 Name = name,
                 Adress = adress,
                 Phone = phone
             };
+
             if (!newCustomer.IsValid())
             {
                 return BadRequest("Data is not valid");
             }
-            customerRepository.UpdateCustomer(name, adress, phone);
+
+            customerRepositorySQL.UpdateCustomerByPhone(newCustomer);
+
             return Ok(newCustomer);
         }
 
         [HttpDelete]
         public IActionResult Delete(string phone)
         {
-            CustomerRepository customerRepository = new CustomerRepository();
-            
-            bool result = customerRepository.DeleteCustomer(phone);
+            bool result = customerRepositorySQL.DeleteCustomerByPhone(phone);
             if (string.IsNullOrWhiteSpace(phone)) return BadRequest("Phone can not be empty");
             if (!result) return NotFound($"Phone:{phone} not found");
             return Ok($"Customer with phone:{phone} was deleted");

@@ -13,16 +13,16 @@ namespace AutoService.Data.Repositories
             this.dbConnection = dbConnection;
         }
 
-        public List<Order> GetAllOrders()
+        public List<DbOrder> GetAllOrders()
         {
-            return dbConnection.Query<Order>("SELECT * FROM orders JOIN cars ON cars.vin = orders.car").ToList();
+            return dbConnection.Query<DbOrder>("SELECT * FROM orders JOIN cars ON cars.vin = orders.car").ToList();
         }
 
-        public Order? GetOrderById(string id)
+        public DbOrder? GetOrderById(string id)
         {
             var sql = @"SELECT * FROM orders WHERE id = @Id";
 
-            return dbConnection.QueryFirstOrDefault<Order>(sql, new { @Id = id });
+            return dbConnection.QueryFirstOrDefault<DbOrder>(sql, new { @Id = id });
         }
 
         public void AddOrder(Order order)

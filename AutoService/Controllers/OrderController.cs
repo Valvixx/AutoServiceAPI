@@ -12,28 +12,54 @@ namespace AutoService.Controllers
     {
         private OrderRepository orderRepository;
         private OrderRepositorySQL orderRepositorySQL;
+        private CarRepositorySQL carRepositorySQL;
+        private CustomerRepositorySQL customerRepositorySQL;
 
-        public OrderController(OrderRepository orderRepository, OrderRepositorySQL orderRepositorySQL)
+        public OrderController(OrderRepository orderRepository, OrderRepositorySQL orderRepositorySQL, CarRepositorySQL carRepositorySQL, CustomerRepositorySQL customerRepositorySQL)
         {
             this.orderRepository = orderRepository;
             this.orderRepositorySQL = orderRepositorySQL;
+            this.carRepositorySQL = carRepositorySQL;
+            this.customerRepositorySQL = customerRepositorySQL;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<Order>> Get()
         {
-            List<Order> orders = orderRepositorySQL.GetAllOrders();
-
-            return Ok(orders);
+            List<Models.DbOrder> orders = orderRepositorySQL.GetAllOrders();
+            List<Order> result = new List<Order>();
+            foreach (Models.DbOrder order in orders)
+            {
+                result.Add(new Order
+                {
+                    Id = order.Id,
+                    Date = order.Date,
+                    Description = order.Description,
+                    Status = order.Status,
+                    OrderCar = carRepositorySQL.GetCarByVin(order.Car),
+                    User = customerRepositorySQL.GetCustomerByPhone(order.Customer)
+                });
+            }
+            return Ok(result);
         }
 
-        [HttpGet("{Id}")]
-        public ActionResult<Order> Get([FromRoute]string id)
+        [HttpGet("{id}")]
+        public ActionResult<Order> Get([FromRoute] string id)
         {
             if (string.IsNullOrWhiteSpace(id)) return BadRequest("Id can not be empty");
 
-            Order order = orderRepositorySQL.GetOrderById(id);
-            return Ok(order);
+            var order = orderRepositorySQL.GetOrderById(id);
+            if (order == null) return NotFound("Order not found");
+            var result = new Order()
+            {
+                Id = order.Id,
+                Date = order.Date,
+                Description = order.Description,
+                Status = order.Status,
+                OrderCar = carRepositorySQL.GetCarByVin(order.Car),
+                User = customerRepositorySQL.GetCustomerByPhone(order.Customer)
+            };
+            return Ok(result);
         }
 
         [HttpPost]

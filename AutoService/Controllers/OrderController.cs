@@ -2,6 +2,7 @@
 using AutoService.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using AutoService.Data.Repositories;
 
 namespace AutoService.Controllers
 {
@@ -10,25 +11,29 @@ namespace AutoService.Controllers
     public class OrderController : ControllerBase
     {
         private OrderRepository orderRepository;
-        public OrderController(OrderRepository orderRepository)
+        private OrderRepositorySQL orderRepositorySQL;
+
+        public OrderController(OrderRepository orderRepository, OrderRepositorySQL orderRepositorySQL)
         {
             this.orderRepository = orderRepository;
+            this.orderRepositorySQL = orderRepositorySQL;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<Order>> Get()
         {
-            List<Order> orders = orderRepository.GetAllOrders();
+            List<Order> orders = orderRepositorySQL.GetAllOrders();
+
             return Ok(orders);
         }
 
         [HttpGet("{Id}")]
-        public ActionResult<Order> Get(string id)
+        public ActionResult<Order> Get([FromRoute]string id)
         {
             if (string.IsNullOrWhiteSpace(id)) return BadRequest("Id can not be empty");
-            List<Order> orders = orderRepository.GetAllOrders();
-            Order SelectedOrder = orders.FirstOrDefault(orders => orders.Id == id);
-            return Ok(SelectedOrder);
+
+            Order order = orderRepositorySQL.GetOrderById(id);
+            return Ok(order);
         }
 
         [HttpPost]
@@ -47,8 +52,8 @@ namespace AutoService.Controllers
             {
                 return BadRequest("Data is not valid");
             }
-            OrderRepository orderRepository = new OrderRepository();
-            orderRepository.AddOrder(newOrder);
+
+            orderRepositorySQL.AddOrder(newOrder);
             return Ok(newOrder);
         }
 

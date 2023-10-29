@@ -64,10 +64,12 @@ namespace AutoService.Controllers
                 Description = orderDTO.Description,
                 Status = orderDTO.Status
             };
+
             if (!newOrder.IsValid())
             {
                 return BadRequest("Data is not valid");
             }
+
             orderRepository.UpdateOrder( orderDTO.Id, orderDTO.CustomerInfo, orderDTO.CarInfo, orderDTO.Date, orderDTO.Description, orderDTO.Status);
             return Ok(newOrder);
 ;

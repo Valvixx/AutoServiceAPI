@@ -29,8 +29,8 @@ namespace AutoService.Controllers
             return Ok(cars);
         }
 
-        [HttpGet("{VIN}")]
-        public ActionResult<Car> Get(string vin)
+        [HttpGet("{vin}")]
+        public ActionResult<Car> Get([FromRoute] string vin)
         {
             Car car = carRepositorySQL.GetCarByVin(vin);
             if (string.IsNullOrWhiteSpace(vin)) return BadRequest("VIN can not be empty");
@@ -54,7 +54,7 @@ namespace AutoService.Controllers
                 return BadRequest("Data is not valid");
             }
 
-            carRepository.AddCar(newCar);
+            carRepositorySQL.AddCar(newCar);
 
             return Ok(newCar);
         }
@@ -75,9 +75,17 @@ namespace AutoService.Controllers
                 return BadRequest("Data is not valid");
             }
 
-            carRepository.UpdateCar(vin, brand, model, releaseYear);
+            carRepositorySQL.UpdateCar(newCar);
 
             return Ok(newCar);
+        }
+
+        [HttpDelete]
+        public ActionResult DeleteCar(string vin) 
+        {
+            carRepositorySQL.DeleteCar(vin);
+            
+            return Ok("Deleted");
         }
 
         [HttpGet("by-client/{phone}")]

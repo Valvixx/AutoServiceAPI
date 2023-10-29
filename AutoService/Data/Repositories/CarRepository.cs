@@ -18,10 +18,38 @@ namespace AutoService.Data.Repositories
             return dbConnection.Query<Car>("SELECT * from cars").ToList();
         }
 
-        public Car GetCarByVin(string carVin) 
+        public Car? GetCarByVin(string carVin)
         {
-            var sql = @"SELECT * FROM cars WHERE vin in @Vin";
-            return dbConnection.QueryFirstOrDefault<Car>(sql, new { Vin = carVin });
+            var sql = @"SELECT * FROM cars WHERE vin = @Vin";
+
+            return dbConnection.QueryFirstOrDefault<Car>(sql, new { @Vin = carVin });
+        }
+
+        public void AddCar(Car car)
+        {
+            var sql = @"INSERT INTO cars(brand, model, ""releaseYear"", vin)
+                VALUES (@Brand, @Model, @ReleaseYear, @VIN)";
+
+            dbConnection.Execute(sql, car);
+        }
+
+        public void UpdateCar(Car car)
+        {
+            var sql = @"UPDATE cars SET
+                brand = @Brand,
+                ""model"" = @Model,
+                ""releaseYear"" = @ReleaseYear
+                WHERE vin = @VIN";
+
+            dbConnection.Execute(sql, car);
+        }
+
+        public void DeleteCar(string vin)
+        {
+            var sql = @"DELETE FROM cars
+                        WHERE vin = @VIN";
+
+            dbConnection.Execute(sql, new { VIN = vin });
         }
     }
 }

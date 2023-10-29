@@ -3,6 +3,9 @@ using AutoService.Data.Repositories;
 using AutoService.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
+using FluentMigrator.Runner;
+using Microsoft.Extensions.DependencyInjection;
+using FluentMigrator.Runner.Initialization;
 
 [assembly: ApiController]
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +23,15 @@ builder.Services.AddSingleton<OrderRepository>();
 builder.Services.AddSingleton<CarRepositorySQL>();
 builder.Services.AddSingleton<CustomerRepositorySQL>();
 builder.Services.AddSingleton<OrderRepositorySQL>();
+
+var serviceProvider = new ServiceCollection()
+    .AddFluentMigratorCore()
+    .ConfigureRunner(builder => builder
+        .AddSqlServer()
+        .WithGlobalConnectionString("postgres://User:User1234@localhost:5431/AutoServiceDB\"")
+        .ScanIn(typeof(YourMigrationClass).Assembly).For.Migrations())
+    .BuildServiceProvider();
+
 
 
 builder.Services.AddTransient<DbConnection>(s => new NpgsqlConnection("postgres://User:User1234@localhost:5431/AutoServiceDB"));

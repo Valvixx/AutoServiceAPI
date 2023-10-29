@@ -6,6 +6,9 @@ using Npgsql;
 using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
 using FluentMigrator.Runner.Initialization;
+using AutoService.Data.Migrations;
+using System;
+using System.Reflection;
 
 [assembly: ApiController]
 var builder = WebApplication.CreateBuilder(args);
@@ -24,20 +27,22 @@ builder.Services.AddSingleton<CarRepositorySQL>();
 builder.Services.AddSingleton<CustomerRepositorySQL>();
 builder.Services.AddSingleton<OrderRepositorySQL>();
 
-var serviceProvider = new ServiceCollection()
-    .AddFluentMigratorCore()
-    .ConfigureRunner(builder => builder
-        .AddSqlServer()
-        .WithGlobalConnectionString("postgres://User:User1234@localhost:5431/AutoServiceDB\"")
-        .ScanIn(typeof(YourMigrationClass).Assembly).For.Migrations())
-    .BuildServiceProvider();
+builder.Services
+    .AddFluentMigratorCore().ConfigureRunner(rb =>
+        rb.AddPostgres().
+            WithGlobalConnectionString("Server=localhost:5431;Database=AutoServiceDB;User Id=User;Password=User1234;")
+            .ScanIn(Assembly.GetExecutingAssembly()).For
+            .Migrations())
+    .AddLogging(lb => lb.AddFluentMigratorConsole())
+    .BuildServiceProvider(false);
 
-
-
-builder.Services.AddTransient<DbConnection>(s => new NpgsqlConnection("postgres://User:User1234@localhost:5431/AutoServiceDB"));
 builder.Services.AddTransient<DbConnection>(s => new NpgsqlConnection("Server=localhost:5431;Database=AutoServiceDB;User Id=User;Password=User1234;"));
 
 var app = builder.Build();
+using var serviceprovider = app.Services.CreateScope();
+var services = serviceprovider.ServiceProvider;
+var runner = services.GetRequiredService<IMigrationRunner>();
+runner.MigrateUp();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

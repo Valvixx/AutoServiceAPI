@@ -51,5 +51,14 @@ namespace AutoService.Data.Repositories
 
             dbConnection.Execute(sql, new { VIN = vin });
         }
+
+        public List <Car> GetCustomerCars(string phone) 
+        {
+            return dbConnection.Query<Car>(@"select c.*
+                                            from cars c
+                                            join orders o on c.vin = o.car
+                                            where customer = @phone;", 
+        new { phone = phone }).ToList();
+        }
     }
 }

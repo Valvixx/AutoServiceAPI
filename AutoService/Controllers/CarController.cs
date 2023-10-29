@@ -91,9 +91,9 @@ namespace AutoService.Controllers
         [HttpGet("by-client/{phone}")]
         public ActionResult<List<Car>> GetCarsByCustomer(string phone)
         {
-            var cars = carRepository.GetAllCustomerCars(phone);
             if (string.IsNullOrWhiteSpace(phone)) return BadRequest("Phone can not be empty");
 
+            var cars = carRepositorySQL.GetCustomerCars(phone);
             return Ok(cars);
         }
     }

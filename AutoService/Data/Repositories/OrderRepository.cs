@@ -43,7 +43,19 @@ namespace AutoService.Data.Repositories
                 status = @Status
                 WHERE id = @Id";
 
-            dbConnection.Execute(sql, new {@Vin = order.OrderCar.VIN, @User = order.User.Phone, @Date = order.Date, @Description = order.Description, @Ststus = order.Status});
+            dbConnection.Execute(sql, new {@Vin = order.OrderCar.VIN, @User = order.User.Phone, @Date = order.Date, @Description = order.Description, @Status = order.Status, @Id = order.Id});
+        }
+
+        public void DeleteOrderById(string id)
+        {
+            var sql = @"DELETE FROM orders WHERE id = @id";
+
+            dbConnection.Execute(sql, new { @id = id });
+        }
+
+        public List<DbOrder> GetOrdersByCustomer(string phone)
+        {
+            return dbConnection.Query<DbOrder>(@"SELECT * FROM orders WHERE customer = @phone", new {@phone = phone}).ToList();
         }
     }
 }

@@ -65,6 +65,8 @@ namespace AutoService.Controllers
         [HttpPost]
         public ActionResult<Order> Post(OrderDTO orderDTO)
         {
+            carRepositorySQL.AddCar(orderDTO.CarInfo);
+            customerRepositorySQL.AddCustomer(orderDTO.CustomerInfo);
             Order newOrder = new Order()
             {
                 User = orderDTO.CustomerInfo,
@@ -86,9 +88,11 @@ namespace AutoService.Controllers
         [HttpPut]
         public ActionResult<Order> Put(OrderDTO orderDTO)
         {
-            OrderRepository orderRepository = new OrderRepository();
+            carRepositorySQL.UpdateCar(orderDTO.CarInfo);
+            customerRepositorySQL.UpdateCustomerByPhone(orderDTO.CustomerInfo);
             var newOrder = new Order()
             {
+                Id = orderDTO.Id,
                 User = orderDTO.CustomerInfo,
                 OrderCar = orderDTO.CarInfo,
                 Date = orderDTO.Date,
@@ -101,27 +105,26 @@ namespace AutoService.Controllers
                 return BadRequest("Data is not valid");
             }
 
-            orderRepository.UpdateOrder( orderDTO.Id, orderDTO.CustomerInfo, orderDTO.CarInfo, orderDTO.Date, orderDTO.Description, orderDTO.Status);
+            orderRepositorySQL.UpdateOrderById(newOrder);
             return Ok(newOrder);
-;
+            ;
         }
 
-        [HttpDelete]
-        public IActionResult Delete(string id)
+        [HttpDelete("{id}")]
+        public IActionResult Delete([FromRoute]string id)
         {
-            OrderRepository orderRepository = new OrderRepository();
-            bool result = orderRepository.DeleteOrder(id);
-            if (string.IsNullOrWhiteSpace(id)) return BadRequest("Id can not be empty");
-            if (!result) return NotFound($"Id:{id} not found");
+            
+            if (string.IsNullOrWhiteSpace(id)) return BadRequest("Id can not be empty");;
+            orderRepositorySQL.DeleteOrderById(id);
             return Ok($"Order with Id:{id} was deleted");
         }
 
         [HttpGet("by-client/{phone}")]
         public ActionResult<List<Order>> GetOrdersByCustomer(string phone)
         {
-            OrderRepository orderRepository = new OrderRepository();
-            var orders = orderRepository.GetOrdersByCustomer(phone);
             if (string.IsNullOrWhiteSpace(phone)) return BadRequest("Phone can not be empty");
+
+            var orders = orderRepositorySQL.GetOrdersByCustomer(phone);
             return Ok(orders);
         }
     }

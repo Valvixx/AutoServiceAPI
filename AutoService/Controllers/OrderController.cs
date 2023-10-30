@@ -65,8 +65,7 @@ namespace AutoService.Controllers
         [HttpPost]
         public ActionResult<Order> Post(OrderDTO orderDTO)
         {
-            carRepositorySQL.AddCar(orderDTO.CarInfo);
-            customerRepositorySQL.AddCustomer(orderDTO.CustomerInfo);
+
             Order newOrder = new Order()
             {
                 User = orderDTO.CustomerInfo,

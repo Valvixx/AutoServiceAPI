@@ -8,7 +8,7 @@ namespace AutoService.Data.Migrations
         public override void Up()
         {
             Create.Table("orders")
-            .WithColumn("id").AsInt32().PrimaryKey().Identity()
+            .WithColumn("id").AsString(255).PrimaryKey().Unique()
             .WithColumn("car").AsString(255).ForeignKey("cars", "vin")
             .WithColumn("customer").AsString(255).ForeignKey("customers", "phone")
             .WithColumn("date").AsString(255)
@@ -16,7 +16,7 @@ namespace AutoService.Data.Migrations
             .WithColumn("status").AsString(255);
 
             Insert.IntoTable("orders")
-                .Row(new { car = "VIN1", customer = "89051234560", date = "11.10.2023", description = "some", status = "Completed"});
+                .Row(new {id = "1", car = "VIN1", customer = "89051234560", date = "11.10.2023", description = "engine repair", status = "Completed"});
         }
         public override void Down()
         {

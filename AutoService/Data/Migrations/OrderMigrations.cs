@@ -9,14 +9,14 @@ namespace AutoService.Data.Migrations
         {
             Create.Table("orders")
             .WithColumn("id").AsInt32().PrimaryKey().Identity()
-            .WithColumn("vin").AsString(255)
-            .WithColumn("phone").AsString(255)
+            .WithColumn("car").AsString(255).ForeignKey("cars", "vin")
+            .WithColumn("customer").AsString(255).ForeignKey("customers", "phone")
             .WithColumn("date").AsString(255)
             .WithColumn("description").AsString(255)
             .WithColumn("status").AsString(255);
 
             Insert.IntoTable("orders")
-                .Row(new { vin = "1", phone = "89051234560", date = "11.10.2023", description = "some", status = "Completed"});
+                .Row(new { car = "VIN1", customer = "89051234560", date = "11.10.2023", description = "some", status = "Completed"});
         }
         public override void Down()
         {
